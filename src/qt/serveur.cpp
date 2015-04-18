@@ -92,28 +92,31 @@ void Serveur::readServeur()
         {
             QRegExp reg(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ PRIVMSG ([a-zA-Z0-9\\#]+) :(.+)");
             QString msg2=msg;
-            ecrire(msg.replace(reg,"\\2 <b>&lt;\\1&gt;</b> \\3"),"",msg2.replace(reg,"\\2 <\\1> \\3"));
+            ecrire(Qt::escape(msg).replace(reg,"\\2 <b>&lt;\\1&gt;</b> \\3"),"",msg2.replace(reg,"\\2 <\\1> \\3"));
         }
         else if(msg.contains(QRegExp(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ JOIN ([a-zA-Z0-9\\#]+)")))
         {
             QRegExp reg(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ JOIN ([a-zA-Z0-9\\#]+)");
             QString msg2=msg;
             ecrire(msg.replace(reg,"\\2 <i>-> \\1 join \\2</i><br />"),"",msg2.replace(reg,"-> \\1 join \\2"));
-            updateUsersList(msg.replace(reg,"\\2"));
+            //updateUsersList(msg.replace(reg,"\\2"));
+            updateUsersList(currentChan);
         }
         else if(msg.contains(QRegExp(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ PART ([a-zA-Z0-9\\#]+)")))
         {
             QRegExp reg(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ PART ([a-zA-Z0-9\\#]+) :(.+)");
             QString msg2=msg;
             ecrire(msg.replace(reg,"\\2 <i>-> \\1 quit \\2 (\\3)</i><br />"),"",msg2.replace(reg,"-> \\1 quit \\2"));
-            updateUsersList(msg.replace(reg,"\\2"));
+            //updateUsersList(msg.replace(reg,"\\2"));
+            updateUsersList(currentChan);
         }
         else if(msg.contains(QRegExp(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ QUIT (.+)")))
         {
             QRegExp reg(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ QUIT (.+)");
             QString msg2=msg;
             ecrire(msg.replace(reg,"\\2 <i>-> \\1 quit this server (\\2)</i><br />"),"",msg2.replace(reg,"-> \\1 left"));
-            updateUsersList(msg.replace(reg,"\\2"));
+            //updateUsersList(msg.replace(reg,"\\2"));
+            updateUsersList(currentChan);
         }
         else if(msg.contains(QRegExp(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ NICK :(.+)")))
         {
@@ -127,7 +130,8 @@ void Serveur::readServeur()
             QRegExp reg(":([a-zA-Z0-9]+)\\!~[a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ KICK ([a-zA-Z0-9\\#]+) ([a-zA-Z0-9]+) :(.+)");
             QString msg2=msg;
             ecrire(msg.replace(reg,"\\2 <i>-> \\1 kicked \\3 (\\4)</i><br />"),"",msg2.replace(reg,"-> \\1 quit \\3"));
-            updateUsersList(msg.replace(reg,"\\2"));
+            //updateUsersList(msg.replace(reg,"\\2"));
+            updateUsersList(currentChan);
         }
         else if(msg.contains(QRegExp(":([a-zA-Z0-9]+)\\![a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ NOTICE ([a-zA-Z0-9]+) :(.+)")))
         {
@@ -148,7 +152,6 @@ void Serveur::readServeur()
         }
         else if(msg.contains(QRegExp("= ([a-zA-Z0-9\\#]+) :")))
         {
-
             QStringList msg3 = msg.split("= ");
             QStringList msg4 = msg3[1].split(" :");
             updateUsersList(msg4[0],msg);
@@ -157,10 +160,6 @@ void Serveur::readServeur()
         {
             QString trimmedMsg = msg.trimmed();
             QStringList splitMsg = trimmedMsg.split(" ");
-            if((splitMsg.size() > 7 && (splitMsg.at(3)+splitMsg.at(4)+splitMsg.at(5)+splitMsg.at(6)+splitMsg.at(7)).toStdString() == "#dopecoin:Endof/NAMESlist.") ||
-                (splitMsg.size() > 7 && (splitMsg.at(3)+splitMsg.at(4)+splitMsg.at(5)+splitMsg.at(6)+splitMsg.at(7)).toStdString() == "#dopecoin:Endof/WHOlist.") ||
-                (splitMsg.size() > 1 && splitMsg.at(0).toStdString() == "PING"))
-                return;
             ecrire(trimmedMsg, QString::fromStdString("Console/PM"));
         }
     }
@@ -250,7 +249,7 @@ QString Serveur::parseCommande(QString comm,bool serveur)
         QString destChan=tab->tabText(tab->currentIndex());
         if(comm.endsWith("<br />"))
         comm=comm.remove(QRegExp("<br />$"));
-        ecrire("<b>&lt;"+pseudo+"&gt;</b> "+comm,destChan);
+        ecrire("<b>&lt;"+pseudo+"&gt;</b> "+Qt::escape(comm),destChan);
 
         return "PRIVMSG "+destChan+" :"+comm;
     }

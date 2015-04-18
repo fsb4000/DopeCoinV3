@@ -26,20 +26,13 @@ ChatWindow::ChatWindow(QWidget *parent)
     ui->splitter->hide();
 
     connect(ui->buttonConnect, SIGNAL(clicked()), this, SLOT(connecte()));
-
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionCloseTab, SIGNAL(triggered()), this, SLOT(closeTab()));
-
     connect(ui->lineEdit, SIGNAL(returnPressed()), this, SLOT(sendCommande()));
-
-
-
-
-
+    connect(ui->send, SIGNAL(clicked()), this, SLOT(sendCommande()));
     connect(ui->disconnect, SIGNAL(clicked()), this, SLOT(disconnectFromServer()));
     connect(ui->tab, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)) );
-    connect(ui->tab, SIGNAL(tabCloseRequested(int)), this, SLOT(tabClosing(int)) );
-
+    connect(ui->tab, SIGNAL(tabCloseRequested(int)), this, SLOT(tabClosing(int)));
 }
 
 

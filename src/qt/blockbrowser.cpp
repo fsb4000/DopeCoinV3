@@ -254,7 +254,7 @@ std::string getInputs(std::string txid)
         str.append(lol6);
         str.append(": ");
         str.append(amount);
-        str.append("DOPE");
+        str.append(" DOPE");
         str.append("\n");
     }
 
@@ -406,11 +406,11 @@ void BlockBrowser::updateExplorer(bool block)
         QString QOutputs = QString::fromUtf8(outputs.c_str());
         QString QInputs = QString::fromUtf8(inputs.c_str());
         QString QFees = QString::number(fees, 'f', 6);
-        ui->valueBox->setText(QValue + " DOPE");
+        ui->valueBox->setText(value == -1.0 ? "N/A" : (QValue + " DOPE"));
         ui->txID->setText(QID);
         ui->outputBox->setText(QOutputs);
         ui->inputBox->setText(QInputs);
-        ui->feesBox->setText(QFees + " DOPE");
+        ui->feesBox->setText(fees == -1.0 ? "N/A" : (QFees + " DOPE"));
     }
 }
 
